@@ -1,0 +1,24 @@
+# This is an example that uses Docker Compose and labels
+# to integrate with Traefik. It uses a theoretical `web`
+# network and proxies requests to the theoretical host
+# `193.168.1.30:3000`.
+#
+# something.example.com -> traefik -> rproxy -> 192.168.1.30:3000
+version: "3"
+services:
+  proxy:
+    image: tjhorner/rproxy
+    environment:
+      RPROXY_TO_HOST: "http://192.168.1.30:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:something.example.com"
+      - "traefik.frontend.protocol=http"
+      - "traefik.frontend.port=3000"
+    networks:
+      - default
+      - web
+
+networks:
+  web:
+    external: true
